@@ -40,11 +40,8 @@ def lightDiscovery():
             while True:
                 strip.set_color(background_color)
                 strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color, 500)
-
-                def on_press(key):  # The function that's called when a key is pressed
-                    print("Key pressed: {0}. Release to action.".format(key))
-
-                def on_release(key):  # The function that's called when a key is released
+                    
+                def on_press(key):  # The function that's called when a key is released                    
                     nonlocal current_user_zone_start
                     nonlocal current_user_zone_end
                     nonlocal current_color
@@ -97,6 +94,9 @@ def lightDiscovery():
                         strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,500)
                         strip.set_zone_color(0, current_user_zone_start, background_color,500)
                         strip.set_zone_color(current_user_zone_end, zone_count, background_color,500)
+
+                def on_release(key):  # The function that's called when a key is pressed
+                    print("Key released: {0}.".format(key))
 
                 with Listener(on_press=on_press, on_release=on_release) as listener:  # Create an instance of Listener
                     listener.join()  # Join the listener thread to the main thread to keep waiting for keys
