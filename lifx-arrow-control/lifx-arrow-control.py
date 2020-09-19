@@ -12,6 +12,7 @@ def lightDiscovery():
     # Discover lights
     print("Discovering lights...")
     lifx = LifxLAN(None,False)
+    lifx.set_power_all_lights("on", duration=1000, rapid=True)
 
     # Get devices
     multizone_lights = lifx.get_multizone_lights()
@@ -32,9 +33,9 @@ def lightDiscovery():
         background_color = WHITE
 
         # User Stuff
-        user_zone_size = zone_count/4 # length of snake in zones
-        current_user_zone_start = 0
-        current_user_zone_end = user_zone_size - 1
+        user_zone_size = zone_count/6 # length of snake in zones
+        current_user_zone_start = (zone_count/2) - (user_zone_size/2)
+        current_user_zone_end = current_user_zone_start + user_zone_size
 
         try:
             while True:
@@ -51,19 +52,6 @@ def lightDiscovery():
                     new_color = random.choice(colour_options)
                     while new_color == current_color:
                         new_color = random.choice(colour_options)
-
-                    # If space key is pressed change the snake colour
-                    if key == Key.space:
-                        print("Space pressed, new color: {0}".format(new_color))
-                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, new_color, 500)
-                        current_color = new_color
-                        # strip.set_color(new_color)
-
-                    # If down right shift key is pressed change the background colour
-                    if key == Key.shift_r:
-                        strip.set_zone_color(0, current_user_zone_start, new_color,1000)
-                        strip.set_zone_color(current_user_zone_end, zone_count, new_color,1000)
-                        background_color = new_color
 
                     # If up key is pressed increase the snake size by 1
                     if key == Key.up:
@@ -97,6 +85,19 @@ def lightDiscovery():
 
                 def on_release(key):  # The function that's called when a key is pressed
                     print("Key released: {0}.".format(key))
+
+                    # If space key is pressed change the snake colour
+                    if key == Key.space:
+                        print("Space pressed, new color: {0}".format(new_color))
+                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, new_color, 500)
+                        current_color = new_color
+                        # strip.set_color(new_color)
+
+                    # If down right shift key is pressed change the background colour
+                    if key == Key.shift_r:
+                        strip.set_zone_color(0, current_user_zone_start, new_color,1000)
+                        strip.set_zone_color(current_user_zone_end, zone_count, new_color,1000)
+                        background_color = new_color
 
                 with Listener(on_press=on_press, on_release=on_release) as listener:  # Create an instance of Listener
                     listener.join()  # Join the listener thread to the main thread to keep waiting for keys
