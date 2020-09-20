@@ -31,6 +31,7 @@ def lightDiscovery():
         starting_color = YELLOW
         current_color = starting_color
         background_color = WHITE
+        user_triggered_transition_duration = 100
 
         # User Stuff
         user_zone_size = zone_count/6 # length of snake in zones
@@ -47,6 +48,9 @@ def lightDiscovery():
                     nonlocal current_user_zone_end
                     nonlocal current_color
                     nonlocal background_color
+                    nonlocal user_zone_size
+
+                    print("-- key: {0}.".format(key))
 
                     # Get new colour
                     new_color = random.choice(colour_options)
@@ -55,36 +59,46 @@ def lightDiscovery():
 
                     # If up key is pressed increase the snake size by 1
                     if key == Key.up:
-                        current_user_zone_end = min(current_user_zone_end + 1,zone_count)
-                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,200)
-                        strip.set_zone_color(0, current_user_zone_start, background_color,200)
-                        strip.set_zone_color(current_user_zone_end, zone_count, background_color,200)
+                        user_zone_size = min(user_zone_size+1, zone_count-1)
+                        current_user_zone_end = current_user_zone_start + user_zone_size
+                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,user_triggered_transition_duration)
+                        strip.set_zone_color(0, current_user_zone_start-1, background_color,user_triggered_transition_duration)
+                        strip.set_zone_color(current_user_zone_end+1, zone_count, background_color,user_triggered_transition_duration)
 
                     # If down key is pressed decrease the snake size by 1
                     if key == Key.down:
-                        current_user_zone_end = min(current_user_zone_end - 1, zone_count)
-                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,200)
-                        strip.set_zone_color(0, current_user_zone_start, background_color,200)
-                        strip.set_zone_color(current_user_zone_end, zone_count, background_color,200)
+                        user_zone_size = max(user_zone_size-1, 1)
+                        current_user_zone_end = current_user_zone_start + user_zone_size
+                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,user_triggered_transition_duration)
+                        strip.set_zone_color(0, current_user_zone_start-1, background_color,user_triggered_transition_duration)
+                        strip.set_zone_color(current_user_zone_end+1, zone_count, background_color,user_triggered_transition_duration)
 
                     # If left arrow key is pressed move the snake left 1
                     if key == Key.left:
                         current_user_zone_start = min(current_user_zone_start + 1, zone_count)
                         current_user_zone_end = min(current_user_zone_end + 1,zone_count)
-                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,200)
-                        strip.set_zone_color(0, current_user_zone_start, background_color,200)
-                        strip.set_zone_color(current_user_zone_end, zone_count, background_color,200)
+                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,user_triggered_transition_duration)
+                        strip.set_zone_color(0, max(current_user_zone_start-1,0), background_color,user_triggered_transition_duration)
+                        strip.set_zone_color(current_user_zone_end+1, zone_count, background_color,user_triggered_transition_duration)
 
                     # If right arrow key is pressed move the snake right 1
                     if key == Key.right:
                         current_user_zone_start = max(current_user_zone_start - 1, 0)
                         current_user_zone_end = max(current_user_zone_end - 1, 0)
-                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,500)
-                        strip.set_zone_color(0, current_user_zone_start, background_color,500)
-                        strip.set_zone_color(current_user_zone_end, zone_count, background_color,500)
+                        strip.set_zone_color(current_user_zone_start, current_user_zone_end, current_color,user_triggered_transition_duration)
+                        strip.set_zone_color(0, max(current_user_zone_start-1,0), background_color,user_triggered_transition_duration)
+                        strip.set_zone_color(current_user_zone_end+1, zone_count, background_color,user_triggered_transition_duration)
 
-                def on_release(key):  # The function that's called when a key is pressed
-                    print("Key released: {0}.".format(key))
+                def on_release(key):  # The function that's called when a key is pressed                    
+                    nonlocal current_user_zone_start
+                    nonlocal current_user_zone_end
+                    nonlocal current_color
+                    nonlocal background_color
+
+                    # Get new colour
+                    new_color = random.choice(colour_options)
+                    while new_color == current_color:
+                        new_color = random.choice(colour_options)
 
                     # If space key is pressed change the snake colour
                     if key == Key.space:
