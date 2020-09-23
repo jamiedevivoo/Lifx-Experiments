@@ -48,12 +48,33 @@ def lightDiscovery():
         zone_count = len(all_zones)
 
         # Options
-        start_position = 2
+        start_position = 1
         player_size = 1
         background_colour = [0,0,0,2500]
         flag_colour = GOLD
         transition_duration = 0
         colours = [[BLUE,ORANGE],[GREEN,PURPLE],[PINK,WHITE],[RED,YELLOW]]
+
+        def race_introductions(player_name):
+            race_introductions = [
+                player_name+", you're up next", 
+                player_name+", you're up!", 
+                player_name+", are you oiled and primed?", 
+                player_name+", this could be the race of legends.", 
+                "Your turn next, "+player_name,
+                "Get your fingers ready, "+player_name,
+                "Can you feel victory, "+player_name,
+                "On your marks " + player_name + " you're next.",
+                "go "+player_name
+            ]
+            return random.choice(race_introductions)
+
+        def winner_announcements(player_name):
+            winner_announcements = [
+                "Stop the race! We have a Winner! Congratulations "+player_name+". You have Won.",
+                player_name + " " + player_name + " " + player_name + " " + player_name + " " + "You are the winner. Congratulations."
+            ]
+            return random.choice(winner_announcements)
 
         # Player Object
         class Player:
@@ -87,7 +108,7 @@ def lightDiscovery():
                 self.fallback_distance = random.choice([0,1])
 
         # Player variables
-        players = [Player("Jamie"),Player("Ryan"),Player("Adam")]
+        players = [Player("Adam"),Player("Oliver"),Player("Jamie")]
 
         # Assign player colours
         i = 0
@@ -118,7 +139,7 @@ def lightDiscovery():
                     player.randomRaceConditions()
                     strip.set_color(background_colour)
                     engine = pyttsx3.init()
-                    engine.say(random.choice([player.name+", you're up next", "Your turn next, "+player.name,"Get your fingers ready, "+player.name,"Can you feel victory, "+player.name,"On your marks " + player.name + " you're next.", "go "+player.name]))
+                    engine.say(race_introductions(player.name))
                     engine.runAndWait()
                     
                     while True:
@@ -172,17 +193,24 @@ def lightDiscovery():
                         strip.set_zone_color(0,zone_count, player.colour, 5000)
                         race_won = True
                         engine = pyttsx3.init()
-                        engine.say("Stop the race! We have a Winner! Congratulations "+player.name+". You have Won.")
+                        engine.say(winner_announcements(player.name))
                         engine.runAndWait()
                         break
         
         
                     strip.set_color(background_colour,500)
+                    
+                    topPlayer = players[0]
 
                     # Other player indicator
                     for competingPlayer in players:
                         strip.set_zone_color(competingPlayer.position, competingPlayer.position, competingPlayer.colour, 0, rapid=True, apply=1)
-
+                        if competingPlayer.position > topPlayer.position:
+                            topPlayer = competingPlayer
+                
+                    engine = pyttsx3.init()
+                    engine.say( topPlayer.name + " is in the lead")
+                    engine.runAndWait()
 
                     sleep(1.5)
                     strip.set_color(background_colour,100)
